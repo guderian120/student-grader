@@ -5,6 +5,7 @@ import com.grader.model.*;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,6 +24,12 @@ public class GradedApplication extends Application {
     private Stage primaryStage;
     private User loggedInUser;
 
+    private Scene createStyledScene(Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        scene.getStylesheets().add(getClass().getResource("/com/grader/application.css").toExternalForm());
+        return scene;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -32,163 +39,279 @@ public class GradedApplication extends Application {
     }
 
     private void showLoginScreen() {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        // Main container with gradient background
+        VBox root = new VBox();
+        root.getStyleClass().add("login-container");
+        
+        // Login card container
+        VBox loginCard = new VBox();
+        loginCard.getStyleClass().add("login-card");
+        
+        // Title and subtitle
+        Label titleLabel = new Label("GradedApp");
+        titleLabel.getStyleClass().add("title-label");
+        
+        Label subtitleLabel = new Label("Welcome back! Please sign in to your account");
+        subtitleLabel.getStyleClass().add("subtitle-label");
 
-        Label titleLabel = new Label("Graded Application Login");
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
+        // Modern input fields
         TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
+        usernameField.setPromptText("Enter your username");
+        usernameField.getStyleClass().add("modern-text-field");
 
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        passwordField.setPromptText("Enter your password");
+        passwordField.getStyleClass().add("modern-password-field");
 
-        Button loginButton = new Button("Login");
+        // Login button
+        Button loginButton = new Button("Sign In");
+        loginButton.getStyleClass().add("primary-button");
 
+        // Message label for errors
         Label messageLabel = new Label();
+        messageLabel.getStyleClass().add("error-message");
+        messageLabel.setVisible(false);
 
+        // Login action
         loginButton.setOnAction(e -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
             loggedInUser = UserDAO.authenticate(username, password);
             if (loggedInUser != null) {
+                messageLabel.setVisible(false);
                 switch (loggedInUser.getRole()) {
                     case ADMIN: showAdminDashboard(); break;
                     case STUDENT: showStudentDashboard(); break;
                     case LECTURER: showLecturerDashboard(); break;
                 }
             } else {
-                messageLabel.setText("Invalid credentials");
-                messageLabel.setStyle("-fx-text-fill: red;");
+                messageLabel.setText("Invalid username or password. Please try again.");
+                messageLabel.setVisible(true);
             }
         });
+        
+        // Allow Enter key to trigger login
+        passwordField.setOnAction(e -> loginButton.fire());
 
-        root.getChildren().addAll(titleLabel, usernameField, passwordField, loginButton, messageLabel);
+        // Add all elements to the login card
+        loginCard.getChildren().addAll(titleLabel, subtitleLabel, usernameField, passwordField, loginButton, messageLabel);
+        root.getChildren().add(loginCard);
 
-        Scene scene = new Scene(root, 400, 300);
+        Scene scene = createStyledScene(root, 500, 650);
         primaryStage.setScene(scene);
     }
 
     private void showAdminDashboard() {
-        VBox root = new VBox(10);
-        root.setSpacing(20);
-        root.setStyle("-fx-padding: 20;");
+        // Main container
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
 
-        Label titleLabel = new Label("Admin Dashboard - Logged in as " + loggedInUser.getUsername());
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        // Dashboard card
+        VBox dashboardCard = new VBox();
+        dashboardCard.getStyleClass().add("dashboard-card");
 
-        HBox buttonBox = new HBox(10);
-        Button manageStudentsBtn = new Button("Manage Students");
-        Button manageLecturersBtn = new Button("Manage Lecturers");
-        Button manageCoursesBtn = new Button("Manage Courses");
-        Button logoutButton = new Button("Logout");
+        // Welcome message
+        Label titleLabel = new Label("Admin Dashboard");
+        titleLabel.getStyleClass().add("dashboard-title");
+        
+        Label welcomeLabel = new Label("Welcome back, " + loggedInUser.getUsername() + "!");
+        welcomeLabel.getStyleClass().add("subtitle-label");
 
-        buttonBox.getChildren().addAll(manageStudentsBtn, manageLecturersBtn, manageCoursesBtn);
+        // Action buttons in a grid layout
+        HBox buttonRow1 = new HBox();
+        buttonRow1.getStyleClass().add("button-group");
+        
+        Button manageStudentsBtn = new Button("👥 Manage Students");
+        manageStudentsBtn.getStyleClass().add("card-button");
+        
+        Button manageLecturersBtn = new Button("👨‍🏫 Manage Lecturers");
+        manageLecturersBtn.getStyleClass().add("card-button");
+        
+        Button manageCoursesBtn = new Button("📚 Manage Courses");
+        manageCoursesBtn.getStyleClass().add("card-button");
 
+        buttonRow1.getChildren().addAll(manageStudentsBtn, manageLecturersBtn, manageCoursesBtn);
+
+        // Logout button
+        HBox logoutRow = new HBox();
+        logoutRow.getStyleClass().add("button-group");
+        Button logoutButton = new Button("Sign Out");
+        logoutButton.getStyleClass().add("secondary-button");
+        logoutRow.getChildren().add(logoutButton);
+
+        // Event handlers
         manageStudentsBtn.setOnAction(e -> showManageStudents());
         manageLecturersBtn.setOnAction(e -> showManageLecturers());
         manageCoursesBtn.setOnAction(e -> showManageCourses());
         logoutButton.setOnAction(e -> showLoginScreen());
 
-        root.getChildren().addAll(titleLabel, buttonBox, logoutButton);
+        // Add all elements to dashboard card
+        dashboardCard.getChildren().addAll(titleLabel, welcomeLabel, buttonRow1, logoutRow);
+        root.getChildren().add(dashboardCard);
 
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
     private void showStudentDashboard() {
-        VBox root = new VBox(10);
-        root.setSpacing(20);
-        root.setStyle("-fx-padding: 20;");
+        // Main container
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
 
-        Label titleLabel = new Label("Student Dashboard - Logged in as " + loggedInUser.getUsername());
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        // Dashboard card
+        VBox dashboardCard = new VBox();
+        dashboardCard.getStyleClass().add("dashboard-card");
 
-        HBox buttonBox = new HBox(10);
-        Button viewGradesBtn = new Button("View Grades");
-        Button makeRequestBtn = new Button("Make Request");
-        Button viewRequestsBtn = new Button("View My Requests");
-        Button logoutButton = new Button("Logout");
+        // Welcome message
+        Label titleLabel = new Label("Student Dashboard");
+        titleLabel.getStyleClass().add("dashboard-title");
+        
+        Label welcomeLabel = new Label("Welcome back, " + loggedInUser.getUsername() + "!");
+        welcomeLabel.getStyleClass().add("subtitle-label");
 
-        buttonBox.getChildren().addAll(viewGradesBtn, makeRequestBtn, viewRequestsBtn);
+        // Action buttons
+        HBox buttonRow1 = new HBox();
+        buttonRow1.getStyleClass().add("button-group");
+        
+        Button viewGradesBtn = new Button("📈 View Grades");
+        viewGradesBtn.getStyleClass().add("card-button");
+        
+        Button makeRequestBtn = new Button("✍️ Make Request");
+        makeRequestBtn.getStyleClass().add("card-button");
+        
+        Button viewRequestsBtn = new Button("📊 View My Requests");
+        viewRequestsBtn.getStyleClass().add("card-button");
 
+        buttonRow1.getChildren().addAll(viewGradesBtn, makeRequestBtn, viewRequestsBtn);
+
+        // Logout button
+        HBox logoutRow = new HBox();
+        logoutRow.getStyleClass().add("button-group");
+        Button logoutButton = new Button("Sign Out");
+        logoutButton.getStyleClass().add("secondary-button");
+        logoutRow.getChildren().add(logoutButton);
+
+        // Event handlers
         viewGradesBtn.setOnAction(e -> showViewGrades());
         makeRequestBtn.setOnAction(e -> showMakeRequest());
         viewRequestsBtn.setOnAction(e -> showViewMyRequests());
         logoutButton.setOnAction(e -> showLoginScreen());
 
-        root.getChildren().addAll(titleLabel, buttonBox, logoutButton);
+        // Add all elements to dashboard card
+        dashboardCard.getChildren().addAll(titleLabel, welcomeLabel, buttonRow1, logoutRow);
+        root.getChildren().add(dashboardCard);
 
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
     private void showLecturerDashboard() {
-        VBox root = new VBox(10);
-        root.setSpacing(20);
-        root.setStyle("-fx-padding: 20;");
+        // Main container
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
 
-        Label titleLabel = new Label("Lecturer Dashboard - Logged in as " + loggedInUser.getUsername());
-        titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        // Dashboard card
+        VBox dashboardCard = new VBox();
+        dashboardCard.getStyleClass().add("dashboard-card");
 
-        HBox buttonBox = new HBox(10);
-        Button manageGradesBtn = new Button("Manage Grades");
-        Button viewRequestsBtn = new Button("View Requests");
-        Button logoutButton = new Button("Logout");
+        // Welcome message
+        Label titleLabel = new Label("Lecturer Dashboard");
+        titleLabel.getStyleClass().add("dashboard-title");
+        
+        Label welcomeLabel = new Label("Welcome back, " + loggedInUser.getUsername() + "!");
+        welcomeLabel.getStyleClass().add("subtitle-label");
 
-        buttonBox.getChildren().addAll(manageGradesBtn, viewRequestsBtn);
+        // Action buttons
+        HBox buttonRow1 = new HBox();
+        buttonRow1.getStyleClass().add("button-group");
+        
+        Button manageGradesBtn = new Button("📋 Manage Grades");
+        manageGradesBtn.getStyleClass().add("card-button");
+        
+        Button viewRequestsBtn = new Button("📧 View Requests");
+        viewRequestsBtn.getStyleClass().add("card-button");
 
+        buttonRow1.getChildren().addAll(manageGradesBtn, viewRequestsBtn);
+
+        // Logout button
+        HBox logoutRow = new HBox();
+        logoutRow.getStyleClass().add("button-group");
+        Button logoutButton = new Button("Sign Out");
+        logoutButton.getStyleClass().add("secondary-button");
+        logoutRow.getChildren().add(logoutButton);
+
+        // Event handlers
         manageGradesBtn.setOnAction(e -> showManageGrades());
         viewRequestsBtn.setOnAction(e -> showViewRequests());
         logoutButton.setOnAction(e -> showLoginScreen());
 
-        root.getChildren().addAll(titleLabel, buttonBox, logoutButton);
+        // Add all elements to dashboard card
+        dashboardCard.getChildren().addAll(titleLabel, welcomeLabel, buttonRow1, logoutRow);
+        root.getChildren().add(dashboardCard);
 
-        Scene scene = new Scene(root, 600, 400);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
     // Admin Management Methods
     private void showManageStudents() {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        // Main container
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
+
+        // Content card
+        VBox contentCard = new VBox();
+        contentCard.getStyleClass().add("dashboard-card");
 
         Label titleLabel = new Label("Manage Students");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("dashboard-title");
 
+        // Modern table view
         TableView<Student> table = new TableView<>();
+        table.getStyleClass().add("modern-table-view");
         table.setItems(javafx.collections.FXCollections.observableArrayList(StudentDAO.getAllStudents()));
 
         TableColumn<Student, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setPrefWidth(60);
 
-        TableColumn<Student, String> nameCol = new TableColumn<>("Name");
+        TableColumn<Student, String> nameCol = new TableColumn<>("Full Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setPrefWidth(200);
 
         TableColumn<Student, String> studentIdCol = new TableColumn<>("Student ID");
         studentIdCol.setCellValueFactory(new PropertyValueFactory<>("studentId"));
+        studentIdCol.setPrefWidth(120);
 
-        TableColumn<Student, String> emailCol = new TableColumn<>("Email");
+        TableColumn<Student, String> emailCol = new TableColumn<>("Email Address");
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+        emailCol.setPrefWidth(250);
 
         table.getColumns().addAll(idCol, nameCol, studentIdCol, emailCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setPrefHeight(400);
 
-        HBox buttonBox = new HBox(10);
-        Button addBtn = new Button("Add Student");
-        Button editBtn = new Button("Edit Selected");
-        Button deleteBtn = new Button("Delete Selected");
-        Button backBtn = new Button("Back");
+        // Action buttons
+        HBox buttonRow = new HBox();
+        buttonRow.getStyleClass().add("button-group");
+        
+        Button addBtn = new Button("➕ Add Student");
+        addBtn.getStyleClass().add("success-button");
+        
+        Button editBtn = new Button("✏️ Edit Selected");
+        editBtn.getStyleClass().add("card-button");
+        
+        Button deleteBtn = new Button("🗑️ Delete Selected");
+        deleteBtn.getStyleClass().add("danger-button");
+        
+        Button backBtn = new Button("← Back to Dashboard");
+        backBtn.getStyleClass().add("secondary-button");
 
-        buttonBox.getChildren().addAll(addBtn, editBtn, deleteBtn, backBtn);
+        buttonRow.getChildren().addAll(addBtn, editBtn, deleteBtn, backBtn);
 
-        table.setPrefHeight(300);
-
-        addBtn.setOnAction(e -> showAddEditStudent(null)); // null for add
+        // Event handlers
+        addBtn.setOnAction(e -> showAddEditStudent(null));
         editBtn.setOnAction(e -> {
             Student selected = table.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -200,38 +323,63 @@ public class GradedApplication extends Application {
             if (selected != null) {
                 StudentDAO.deleteStudent(selected.getId());
                 table.setItems(javafx.collections.FXCollections.observableArrayList(StudentDAO.getAllStudents()));
-                UserDAO.deleteUser(selected.getUserId()); // also delete user
+                UserDAO.deleteUser(selected.getUserId());
             }
         });
         backBtn.setOnAction(e -> showAdminDashboard());
 
-        root.getChildren().addAll(titleLabel, table, buttonBox);
+        contentCard.getChildren().addAll(titleLabel, table, buttonRow);
+        root.getChildren().add(contentCard);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = createStyledScene(root, 1000, 700);
         primaryStage.setScene(scene);
     }
 
     private void showAddEditStudent(Student student) {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        // Main container
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
 
-        Label titleLabel = new Label(student == null ? "Add Student" : "Edit Student");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        // Form card
+        VBox formCard = new VBox();
+        formCard.getStyleClass().add("form-container");
 
+        Label titleLabel = new Label(student == null ? "Add New Student" : "Edit Student");
+        titleLabel.getStyleClass().add("form-title");
+
+        // Form fields with labels
+        Label usernameLabel = new Label("Username");
+        usernameLabel.getStyleClass().add("form-label");
         TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
+        usernameField.setPromptText("Enter username");
+        usernameField.getStyleClass().add("modern-text-field");
+        
+        Label passwordLabel = new Label("Password");
+        passwordLabel.getStyleClass().add("form-label");
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        passwordField.setPromptText("Enter password");
+        passwordField.getStyleClass().add("modern-password-field");
+        
+        Label nameLabel = new Label("Full Name");
+        nameLabel.getStyleClass().add("form-label");
         TextField nameField = new TextField();
-        nameField.setPromptText("Name");
+        nameField.setPromptText("Enter full name");
+        nameField.getStyleClass().add("modern-text-field");
+        
+        Label studentIdLabel = new Label("Student ID");
+        studentIdLabel.getStyleClass().add("form-label");
         TextField studentIdField = new TextField();
-        studentIdField.setPromptText("Student ID");
+        studentIdField.setPromptText("Enter student ID");
+        studentIdField.getStyleClass().add("modern-text-field");
+        
+        Label emailLabel = new Label("Email Address");
+        emailLabel.getStyleClass().add("form-label");
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
+        emailField.setPromptText("Enter email address");
+        emailField.getStyleClass().add("modern-text-field");
 
+        // Populate fields for editing
         if (student != null) {
-            // Populate for edit
             User user = UserDAO.getAllUsers().stream().filter(u -> u.getId() == student.getUserId()).findFirst().orElse(null);
             if (user != null) {
                 usernameField.setText(user.getUsername());
@@ -242,9 +390,19 @@ public class GradedApplication extends Application {
             }
         }
 
-        Button saveBtn = new Button("Save");
+        // Action buttons
+        HBox buttonRow = new HBox();
+        buttonRow.getStyleClass().add("button-group");
+        
+        Button saveBtn = new Button(student == null ? "Create Student" : "Update Student");
+        saveBtn.getStyleClass().add("success-button");
+        
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("secondary-button");
+        
+        buttonRow.getChildren().addAll(saveBtn, cancelBtn);
 
+        // Event handlers
         saveBtn.setOnAction(e -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -267,17 +425,21 @@ public class GradedApplication extends Application {
                 Student updatedStudent = new Student(student.getId(), student.getUserId(), name, studentId, email);
                 StudentDAO.updateStudent(updatedStudent);
             }
-            showManageStudents(); // Refresh list
+            showManageStudents();
         });
         cancelBtn.setOnAction(e -> showManageStudents());
 
-        HBox buttonBox = new HBox(10, saveBtn, cancelBtn);
+        formCard.getChildren().addAll(titleLabel, 
+            usernameLabel, usernameField,
+            passwordLabel, passwordField,
+            nameLabel, nameField,
+            studentIdLabel, studentIdField,
+            emailLabel, emailField,
+            buttonRow);
+        
+        root.getChildren().add(formCard);
 
-        root.getChildren().addAll(titleLabel, new Label("Username:"), usernameField, new Label("Password:"), passwordField,
-                                  new Label("Name:"), nameField, new Label("Student ID:"), studentIdField,
-                                  new Label("Email:"), emailField, buttonBox);
-
-        Scene scene = new Scene(root, 400, 500);
+        Scene scene = createStyledScene(root, 600, 700);
         primaryStage.setScene(scene);
     }
 
@@ -337,7 +499,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, buttonBox);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
@@ -404,7 +566,7 @@ public class GradedApplication extends Application {
                                   new Label("Name:"), nameField, new Label("Lecturer ID:"), lecturerIdField,
                                   new Label("Email:"), emailField, buttonBox);
 
-        Scene scene = new Scene(root, 400, 500);
+        Scene scene = createStyledScene(root, 400, 500);
         primaryStage.setScene(scene);
     }
 
@@ -459,7 +621,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, buttonBox);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
@@ -509,7 +671,7 @@ public class GradedApplication extends Application {
         root.getChildren().addAll(titleLabel, new Label("Course Code:"), courseCodeField,
                                   new Label("Name:"), nameField, new Label("Description:"), descriptionArea, buttonBox);
 
-        Scene scene = new Scene(root, 400, 400);
+        Scene scene = createStyledScene(root, 400, 400);
         primaryStage.setScene(scene);
     }
 
@@ -605,7 +767,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, buttonBox);
 
-        Scene scene = new Scene(root, 1000, 600);
+        Scene scene = createStyledScene(root, 1000, 600);
         primaryStage.setScene(scene);
     }
 
@@ -675,7 +837,7 @@ public class GradedApplication extends Application {
         root.getChildren().addAll(titleLabel, new Label("Student:"), studentCombo, new Label("Course:"), courseCombo,
                                   new Label("Grade:"), gradeField, new Label("Remark:"), remarkArea, buttonBox);
 
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = createStyledScene(root, 500, 500);
         primaryStage.setScene(scene);
     }
 
@@ -736,7 +898,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, buttonBox);
 
-        Scene scene = new Scene(root, 1000, 600);
+        Scene scene = createStyledScene(root, 1000, 600);
         primaryStage.setScene(scene);
     }
 
@@ -818,7 +980,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, backBtn);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
@@ -860,7 +1022,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, new Label("Select Grade:"), gradeCombo, new Label("Request Type:"), typeCombo, buttonBox);
 
-        Scene scene = new Scene(root, 500, 400);
+        Scene scene = createStyledScene(root, 500, 400);
         primaryStage.setScene(scene);
     }
 
@@ -898,7 +1060,7 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, table, backBtn);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
 
