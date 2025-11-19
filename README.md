@@ -2,43 +2,26 @@
 
 A Java grading application with role-based access (Admin, Lecturer, Student), SQLite database, and JavaFX UI.
 
+## Documentation
+- **[Architecture & Design](ARCHITECTURE.md)**: System overview, database schema, and flow diagrams.
+- **[Installation & Compilation](INSTALL.md)**: Step-by-step guide to build and run the application.
+
+## Quick Start
+1. **Compile**:
+   ```powershell
+   javac -d bin -cp "lib/sqlite-jdbc-3.36.0.3.jar;lib/javafx-sdk-17.0.2/lib/*" src/java/com/grader/*.java src/java/com/grader/dao/*.java src/java/com/grader/model/*.java
+   ```
+2. **Run**:
+   ```powershell
+   java -cp "bin;lib/sqlite-jdbc-3.36.0.3.jar" --module-path "lib/javafx-sdk-17.0.2/lib" --add-modules javafx.controls,javafx.fxml com.grader.GradedApplication
+   ```
+
 ## Features
-- User authentication (Admin, Lecturer, Student)
-- SQLite database for data storage
-- JavaFX UI with custom themes
-- Role-based dashboards
-
-## Prerequisites
-- Java 17+
-- JavaFX libraries
-- SQLite JDBC driver
-
-## Setup
-1. Download JavaFX 17 SDK from GluonHQ: https://gluonhq.com/products/javafx/
-2. Download SQLite JDBC jar: https://github.com/xerial/sqlite-jdbc/releases/download/3.36.0.3/sqlite-jdbc-3.36.0.3.jar
-3. Place JavaFX jars and sqlite-jdbc.jar in a `lib` directory
-
-## Compilation
-```
-javac -cp "lib/*;." -d bin src/com/grader/*.java
-javac -cp "lib/*;." -d bin src/com/grader/dao/*.java
-javac -cp "lib/*;." -d bin src/com/grader/model/*.java
-```
-
-## Running
-```
-java --module-path lib/javafx/lib --add-modules javafx.controls,javafx.fxml -cp "lib/sqlite-jdbc-3.36.0.3.jar;bin" com.grader.GradedApplication
-```
+- **Role-based Access**: Admin, Lecturer, Student dashboards.
+- **Data Persistence**: SQLite database.
+- **Modern UI**: JavaFX with custom CSS styling.
 
 ## Default Credentials
-- Admin: admin / admin
-- Student: student / student
-- Lecturer: lecturer / lecturer
-
-## Project Structure
-- src/com/grader/ - Main classes (Application.java)
-- src/com/grader/model/ - Entity classes
-- src/com/grader/dao/ - Data access objects
-- src/com/grader/ - UI controllers
-
-This is a basic implementation based on user stories. Further features can be added to each dashboard.
+- **Admin**: admin / admin
+- **Student**: student / student
+- **Lecturer**: lecturer / lecturer
