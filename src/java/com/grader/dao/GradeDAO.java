@@ -13,7 +13,7 @@ import java.util.List;
 public class GradeDAO {
 
     public static boolean addGrade(Grade grade) {
-        String sql = "INSERT INTO grades (student_id, course_id, lecturer_id, grade, remark) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO grades (student_id, course_id, lecturer_id, grade, remark, mid_sem_score, exam_score, attendance_count, total_attendance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, grade.getStudentId());
@@ -21,6 +21,10 @@ public class GradeDAO {
             pstmt.setInt(3, grade.getLecturerId());
             pstmt.setDouble(4, grade.getGrade());
             pstmt.setString(5, grade.getRemark());
+            pstmt.setDouble(6, grade.getMidSemScore());
+            pstmt.setDouble(7, grade.getExamScore());
+            pstmt.setInt(8, grade.getAttendanceCount());
+            pstmt.setInt(9, grade.getTotalAttendance());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Add grade error: " + e.getMessage());
@@ -29,7 +33,7 @@ public class GradeDAO {
     }
 
     public static boolean updateGrade(Grade grade) {
-        String sql = "UPDATE grades SET student_id = ?, course_id = ?, lecturer_id = ?, grade = ?, remark = ? WHERE id = ?";
+        String sql = "UPDATE grades SET student_id = ?, course_id = ?, lecturer_id = ?, grade = ?, remark = ?, mid_sem_score = ?, exam_score = ?, attendance_count = ?, total_attendance = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, grade.getStudentId());
@@ -37,7 +41,11 @@ public class GradeDAO {
             pstmt.setInt(3, grade.getLecturerId());
             pstmt.setDouble(4, grade.getGrade());
             pstmt.setString(5, grade.getRemark());
-            pstmt.setInt(6, grade.getId());
+            pstmt.setDouble(6, grade.getMidSemScore());
+            pstmt.setDouble(7, grade.getExamScore());
+            pstmt.setInt(8, grade.getAttendanceCount());
+            pstmt.setInt(9, grade.getTotalAttendance());
+            pstmt.setInt(10, grade.getId());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Update grade error: " + e.getMessage());
@@ -66,7 +74,9 @@ public class GradeDAO {
             if (rs.next()) {
                 return new Grade(rs.getInt("id"), rs.getInt("student_id"),
                                  rs.getInt("course_id"), rs.getInt("lecturer_id"),
-                                 rs.getDouble("grade"), rs.getString("remark"));
+                                 rs.getDouble("grade"), rs.getString("remark"),
+                                 rs.getDouble("mid_sem_score"), rs.getDouble("exam_score"),
+                                 rs.getInt("attendance_count"), rs.getInt("total_attendance"));
             }
         } catch (SQLException e) {
             System.err.println("Get grade by id error: " + e.getMessage());
@@ -84,7 +94,9 @@ public class GradeDAO {
             while (rs.next()) {
                 grades.add(new Grade(rs.getInt("id"), rs.getInt("student_id"),
                                      rs.getInt("course_id"), rs.getInt("lecturer_id"),
-                                     rs.getDouble("grade"), rs.getString("remark")));
+                                     rs.getDouble("grade"), rs.getString("remark"),
+                                     rs.getDouble("mid_sem_score"), rs.getDouble("exam_score"),
+                                     rs.getInt("attendance_count"), rs.getInt("total_attendance")));
             }
         } catch (SQLException e) {
             System.err.println("Get grades by student id error: " + e.getMessage());
@@ -102,7 +114,9 @@ public class GradeDAO {
             while (rs.next()) {
                 grades.add(new Grade(rs.getInt("id"), rs.getInt("student_id"),
                                      rs.getInt("course_id"), rs.getInt("lecturer_id"),
-                                     rs.getDouble("grade"), rs.getString("remark")));
+                                     rs.getDouble("grade"), rs.getString("remark"),
+                                     rs.getDouble("mid_sem_score"), rs.getDouble("exam_score"),
+                                     rs.getInt("attendance_count"), rs.getInt("total_attendance")));
             }
         } catch (SQLException e) {
             System.err.println("Get grades by lecturer id error: " + e.getMessage());
@@ -123,7 +137,11 @@ public class GradeDAO {
                 int lecturerId = rs.getInt("lecturer_id");
                 double gradeVal = rs.getDouble("grade");
                 String remark = rs.getString("remark");
-                grades.add(new Grade(id, studentId, courseId, lecturerId, gradeVal, remark));
+                double midSem = rs.getDouble("mid_sem_score");
+                double exam = rs.getDouble("exam_score");
+                int attCount = rs.getInt("attendance_count");
+                int totalAtt = rs.getInt("total_attendance");
+                grades.add(new Grade(id, studentId, courseId, lecturerId, gradeVal, remark, midSem, exam, attCount, totalAtt));
             }
         } catch (SQLException e) {
             System.err.println("Get all grades error: " + e.getMessage());

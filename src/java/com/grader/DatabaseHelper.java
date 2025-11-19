@@ -62,6 +62,10 @@ public class DatabaseHelper {
                 lecturer_id INTEGER,
                 grade REAL,
                 remark TEXT,
+                mid_sem_score REAL,
+                exam_score REAL,
+                attendance_count INTEGER,
+                total_attendance INTEGER,
                 FOREIGN KEY (student_id) REFERENCES students (id),
                 FOREIGN KEY (course_id) REFERENCES courses (id),
                 FOREIGN KEY (lecturer_id) REFERENCES lecturers (id)

@@ -7,16 +7,25 @@ public class Grade {
     private int lecturerId;
     private double grade;
     private String remark;
+    private double midSemScore;
+    private double examScore;
+    private int attendanceCount;
+    private int totalAttendance;
 
     public Grade() {}
 
-    public Grade(int id, int studentId, int courseId, int lecturerId, double grade, String remark) {
+    public Grade(int id, int studentId, int courseId, int lecturerId, double grade, String remark, 
+                 double midSemScore, double examScore, int attendanceCount, int totalAttendance) {
         this.id = id;
         this.studentId = studentId;
         this.courseId = courseId;
         this.lecturerId = lecturerId;
         this.grade = grade;
         this.remark = remark;
+        this.midSemScore = midSemScore;
+        this.examScore = examScore;
+        this.attendanceCount = attendanceCount;
+        this.totalAttendance = totalAttendance;
     }
 
     // Getters and Setters
@@ -37,4 +46,16 @@ public class Grade {
 
     public String getRemark() { return remark; }
     public void setRemark(String remark) { this.remark = remark; }
+
+    public double getMidSemScore() { return midSemScore; }
+    public void setMidSemScore(double midSemScore) { this.midSemScore = midSemScore; }
+
+    public double getExamScore() { return examScore; }
+    public void setExamScore(double examScore) { this.examScore = examScore; }
+
+    public int getAttendanceCount() { return attendanceCount; }
+    public void setAttendanceCount(int attendanceCount) { this.attendanceCount = attendanceCount; }
+
+    public int getTotalAttendance() { return totalAttendance; }
+    public void setTotalAttendance(int totalAttendance) { this.totalAttendance = totalAttendance; }
 }

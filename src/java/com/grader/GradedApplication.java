@@ -439,7 +439,12 @@ public class GradedApplication extends Application {
         
         root.getChildren().add(formCard);
 
-        Scene scene = createStyledScene(root, 600, 700);
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("scroll-pane");
+
+        Scene scene = createStyledScene(scrollPane, 600, 700);
         primaryStage.setScene(scene);
     }
 
@@ -450,9 +455,10 @@ public class GradedApplication extends Application {
         root.setPadding(new Insets(20));
 
         Label titleLabel = new Label("Manage Lecturers");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("dashboard-title");
 
         TableView<Lecturer> table = new TableView<>();
+        table.getStyleClass().add("modern-table-view");
         table.setItems(javafx.collections.FXCollections.observableArrayList(LecturerDAO.getAllLecturers()));
 
         TableColumn<Lecturer, Integer> idCol = new TableColumn<>("ID");
@@ -471,10 +477,19 @@ public class GradedApplication extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         HBox buttonBox = new HBox(10);
+        buttonBox.getStyleClass().add("button-group");
+        
         Button addBtn = new Button("Add Lecturer");
+        addBtn.getStyleClass().add("success-button");
+        
         Button editBtn = new Button("Edit Selected");
+        editBtn.getStyleClass().add("card-button");
+        
         Button deleteBtn = new Button("Delete Selected");
+        deleteBtn.getStyleClass().add("danger-button");
+        
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
 
         buttonBox.getChildren().addAll(addBtn, editBtn, deleteBtn, backBtn);
 
@@ -504,23 +519,45 @@ public class GradedApplication extends Application {
     }
 
     private void showAddEditLecturer(Lecturer lecturer) {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
+
+        VBox formCard = new VBox();
+        formCard.getStyleClass().add("form-container");
 
         Label titleLabel = new Label(lecturer == null ? "Add Lecturer" : "Edit Lecturer");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("form-title");
 
+        // Form fields with labels
+        Label usernameLabel = new Label("Username");
+        usernameLabel.getStyleClass().add("form-label");
         TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
+        usernameField.getStyleClass().add("modern-text-field");
+        usernameField.setPromptText("Enter username");
+
+        Label passwordLabel = new Label("Password");
+        passwordLabel.getStyleClass().add("form-label");
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        passwordField.getStyleClass().add("modern-password-field");
+        passwordField.setPromptText("Enter password");
+
+        Label nameLabel = new Label("Name");
+        nameLabel.getStyleClass().add("form-label");
         TextField nameField = new TextField();
-        nameField.setPromptText("Name");
+        nameField.getStyleClass().add("modern-text-field");
+        nameField.setPromptText("Enter name");
+
+        Label lecturerIdLabel = new Label("Lecturer ID");
+        lecturerIdLabel.getStyleClass().add("form-label");
         TextField lecturerIdField = new TextField();
-        lecturerIdField.setPromptText("Lecturer ID");
+        lecturerIdField.getStyleClass().add("modern-text-field");
+        lecturerIdField.setPromptText("Enter lecturer ID");
+
+        Label emailLabel = new Label("Email");
+        emailLabel.getStyleClass().add("form-label");
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
+        emailField.getStyleClass().add("modern-text-field");
+        emailField.setPromptText("Enter email");
 
         if (lecturer != null) {
             User user = UserDAO.getAllUsers().stream().filter(u -> u.getId() == lecturer.getUserId()).findFirst().orElse(null);
@@ -533,8 +570,17 @@ public class GradedApplication extends Application {
             }
         }
 
+        // Action buttons
+        HBox buttonRow = new HBox();
+        buttonRow.getStyleClass().add("button-group");
+
         Button saveBtn = new Button("Save");
+        saveBtn.getStyleClass().add("success-button");
+
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("secondary-button");
+
+        buttonRow.getChildren().addAll(saveBtn, cancelBtn);
 
         saveBtn.setOnAction(e -> {
             String username = usernameField.getText();
@@ -560,25 +606,37 @@ public class GradedApplication extends Application {
         });
         cancelBtn.setOnAction(e -> showManageLecturers());
 
-        HBox buttonBox = new HBox(10, saveBtn, cancelBtn);
+        formCard.getChildren().addAll(titleLabel,
+            usernameLabel, usernameField,
+            passwordLabel, passwordField,
+            nameLabel, nameField,
+            lecturerIdLabel, lecturerIdField,
+            emailLabel, emailField,
+            buttonRow);
 
-        root.getChildren().addAll(titleLabel, new Label("Username:"), usernameField, new Label("Password:"), passwordField,
-                                  new Label("Name:"), nameField, new Label("Lecturer ID:"), lecturerIdField,
-                                  new Label("Email:"), emailField, buttonBox);
+        root.getChildren().add(formCard);
 
-        Scene scene = createStyledScene(root, 400, 500);
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("scroll-pane");
+
+        Scene scene = createStyledScene(scrollPane, 400, 500);
         primaryStage.setScene(scene);
     }
 
     private void showManageCourses() {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
+
+        VBox contentCard = new VBox();
+        contentCard.getStyleClass().add("dashboard-card");
 
         Label titleLabel = new Label("Manage Courses");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("dashboard-title");
 
         TableView<Course> table = new TableView<>();
+        table.getStyleClass().add("modern-table-view");
         table.setItems(javafx.collections.FXCollections.observableArrayList(CourseDAO.getAllCourses()));
 
         TableColumn<Course, String> courseCodeCol = new TableColumn<>("Course Code");
@@ -594,10 +652,19 @@ public class GradedApplication extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         HBox buttonBox = new HBox(10);
+        buttonBox.getStyleClass().add("button-group");
+        
         Button addBtn = new Button("Add Course");
+        addBtn.getStyleClass().add("success-button");
+        
         Button editBtn = new Button("Edit Selected");
+        editBtn.getStyleClass().add("card-button");
+        
         Button deleteBtn = new Button("Delete Selected");
+        deleteBtn.getStyleClass().add("danger-button");
+        
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
 
         buttonBox.getChildren().addAll(addBtn, editBtn, deleteBtn, backBtn);
 
@@ -626,19 +693,33 @@ public class GradedApplication extends Application {
     }
 
     private void showAddEditCourse(Course course) {
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
+
+        VBox formCard = new VBox();
+        formCard.getStyleClass().add("form-container");
 
         Label titleLabel = new Label(course == null ? "Add Course" : "Edit Course");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("form-title");
 
+        // Form fields with labels
+        Label courseCodeLabel = new Label("Course Code");
+        courseCodeLabel.getStyleClass().add("form-label");
         TextField courseCodeField = new TextField();
-        courseCodeField.setPromptText("Course Code");
+        courseCodeField.getStyleClass().add("modern-text-field");
+        courseCodeField.setPromptText("Enter course code");
+
+        Label nameLabel = new Label("Name");
+        nameLabel.getStyleClass().add("form-label");
         TextField nameField = new TextField();
-        nameField.setPromptText("Name");
+        nameField.getStyleClass().add("modern-text-field");
+        nameField.setPromptText("Enter course name");
+
+        Label descriptionLabel = new Label("Description");
+        descriptionLabel.getStyleClass().add("form-label");
         TextArea descriptionArea = new TextArea();
-        descriptionArea.setPromptText("Description");
+        descriptionArea.getStyleClass().addAll("modern-text-field");
+        descriptionArea.setPromptText("Enter course description");
         descriptionArea.setPrefRowCount(3);
 
         if (course != null) {
@@ -647,8 +728,17 @@ public class GradedApplication extends Application {
             descriptionArea.setText(course.getDescription());
         }
 
+        // Action buttons
+        HBox buttonRow = new HBox();
+        buttonRow.getStyleClass().add("button-group");
+
         Button saveBtn = new Button("Save");
+        saveBtn.getStyleClass().add("success-button");
+
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("secondary-button");
+
+        buttonRow.getChildren().addAll(saveBtn, cancelBtn);
 
         saveBtn.setOnAction(e -> {
             String courseCode = courseCodeField.getText();
@@ -666,12 +756,20 @@ public class GradedApplication extends Application {
         });
         cancelBtn.setOnAction(e -> showManageCourses());
 
-        HBox buttonBox = new HBox(10, saveBtn, cancelBtn);
+        formCard.getChildren().addAll(titleLabel,
+            courseCodeLabel, courseCodeField,
+            nameLabel, nameField,
+            descriptionLabel, descriptionArea,
+            buttonRow);
 
-        root.getChildren().addAll(titleLabel, new Label("Course Code:"), courseCodeField,
-                                  new Label("Name:"), nameField, new Label("Description:"), descriptionArea, buttonBox);
+        root.getChildren().add(formCard);
 
-        Scene scene = createStyledScene(root, 400, 400);
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("scroll-pane");
+
+        Scene scene = createStyledScene(scrollPane, 400, 400);
         primaryStage.setScene(scene);
     }
 
@@ -691,6 +789,9 @@ public class GradedApplication extends Application {
         public String getCourseName() { return courseName; }
         public double getGradeValue() { return grade.getGrade(); }
         public String getRemark() { return grade.getRemark(); }
+        public double getMidSem() { return grade.getMidSemScore(); }
+        public double getExam() { return grade.getExamScore(); }
+        public String getAttendance() { return grade.getAttendanceCount() + "/" + grade.getTotalAttendance(); }
     }
 
     private static class RequestInfo {
@@ -714,14 +815,17 @@ public class GradedApplication extends Application {
         Lecturer lecturer = LecturerDAO.getLecturerByUserId(loggedInUser.getId());
         if (lecturer == null) return; // Error, but for simplicity
 
-        VBox root = new VBox(10);
-        root.setSpacing(10);
-        root.setPadding(new Insets(20));
+        VBox root = new VBox();
+        root.getStyleClass().add("dashboard-container");
+
+        VBox contentCard = new VBox();
+        contentCard.getStyleClass().add("dashboard-card");
 
         Label titleLabel = new Label("Manage Grades");
-        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        titleLabel.getStyleClass().add("dashboard-title");
 
         TableView<GradeInfo> table = new TableView<>();
+        table.getStyleClass().add("modern-table-view");
         table.setItems(javafx.collections.FXCollections.observableArrayList(getGradeInfos(lecturer.getId())));
 
         TableColumn<GradeInfo, String> studentNameCol = new TableColumn<>("Student Name");
@@ -730,20 +834,38 @@ public class GradedApplication extends Application {
         TableColumn<GradeInfo, String> courseNameCol = new TableColumn<>("Course Name");
         courseNameCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseName()));
 
-        TableColumn<GradeInfo, Double> gradeCol = new TableColumn<>("Grade");
-        gradeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getGradeValue()));
+        TableColumn<GradeInfo, String> midSemCol = new TableColumn<>("MidSem (20%)");
+        midSemCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getMidSem())));
 
-        TableColumn<GradeInfo, String> remarkCol = new TableColumn<>("Remark");
+        TableColumn<GradeInfo, String> examCol = new TableColumn<>("Exam (70%)");
+        examCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getExam())));
+
+        TableColumn<GradeInfo, String> attCol = new TableColumn<>("Attendance (10%)");
+        attCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAttendance()));
+
+        TableColumn<GradeInfo, String> gradeCol = new TableColumn<>("Total");
+        gradeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getGradeValue())));
+
+        TableColumn<GradeInfo, String> remarkCol = new TableColumn<>("Grade");
         remarkCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRemark()));
 
-        table.getColumns().addAll(studentNameCol, courseNameCol, gradeCol, remarkCol);
+        table.getColumns().addAll(studentNameCol, courseNameCol, midSemCol, examCol, attCol, gradeCol, remarkCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         HBox buttonBox = new HBox(10);
+        buttonBox.getStyleClass().add("button-group");
+        
         Button addBtn = new Button("Add Grade");
+        addBtn.getStyleClass().add("success-button");
+        
         Button editBtn = new Button("Edit Selected");
+        editBtn.getStyleClass().add("card-button");
+        
         Button deleteBtn = new Button("Delete Selected");
+        deleteBtn.getStyleClass().add("danger-button");
+        
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
 
         buttonBox.getChildren().addAll(addBtn, editBtn, deleteBtn, backBtn);
 
@@ -790,41 +912,70 @@ public class GradedApplication extends Application {
         courseCombo.setItems(javafx.collections.FXCollections.observableArrayList(CourseDAO.getAllCourses()));
         courseCombo.setPromptText("Select Course");
 
-        TextField gradeField = new TextField();
-        gradeField.setPromptText("Grade (e.g., 85.5)");
-        TextArea remarkArea = new TextArea();
-        remarkArea.setPromptText("Remark");
-        remarkArea.setPrefRowCount(3);
+        TextField midSemField = new TextField();
+        midSemField.setPromptText("Mid-Semester Score (0-100)");
+        
+        TextField examField = new TextField();
+        examField.setPromptText("Exam Score (0-100)");
+        
+        TextField attendanceField = new TextField();
+        attendanceField.setPromptText("Student Attendance Count");
+        
+        TextField totalAttendanceField = new TextField();
+        totalAttendanceField.setPromptText("Total Attendance Count");
 
         if (grade != null) {
             Student student = StudentDAO.getStudentById(grade.getStudentId());
             if (student != null) studentCombo.setValue(student);
             Course course = CourseDAO.getCourseById(grade.getCourseId());
             if (course != null) courseCombo.setValue(course);
-            gradeField.setText(String.valueOf(grade.getGrade()));
-            remarkArea.setText(grade.getRemark());
+            midSemField.setText(String.valueOf(grade.getMidSemScore()));
+            examField.setText(String.valueOf(grade.getExamScore()));
+            attendanceField.setText(String.valueOf(grade.getAttendanceCount()));
+            totalAttendanceField.setText(String.valueOf(grade.getTotalAttendance()));
         }
 
         Button saveBtn = new Button("Save");
+        saveBtn.getStyleClass().add("success-button");
+        
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("secondary-button");
 
         saveBtn.setOnAction(e -> {
             Student selectedStudent = studentCombo.getValue();
             Course selectedCourse = courseCombo.getValue();
-            double grd;
+            double midSem, exam;
+            int attendance, totalAtt;
             try {
-                grd = Double.parseDouble(gradeField.getText());
+                midSem = Double.parseDouble(midSemField.getText());
+                exam = Double.parseDouble(examField.getText());
+                attendance = Integer.parseInt(attendanceField.getText());
+                totalAtt = Integer.parseInt(totalAttendanceField.getText());
             } catch (NumberFormatException ex) {
-                return; // Error, but ignore for simplicity
+                // Show error alert ideally
+                return; 
             }
-            String rmk = remarkArea.getText();
+
+            if (totalAtt == 0) totalAtt = 1; // Avoid division by zero
+
+            // Calculation Logic
+            double attendancePercent = ((double) attendance / totalAtt) * 100;
+            double finalGrade = (attendancePercent * 0.10) + (midSem * 0.20) + (exam * 0.70);
+            
+            // Determine Letter Grade
+            String letterGrade;
+            if (finalGrade >= 80) letterGrade = "A";
+            else if (finalGrade >= 70) letterGrade = "B";
+            else if (finalGrade >= 60) letterGrade = "C";
+            else if (finalGrade >= 50) letterGrade = "D";
+            else letterGrade = "F";
 
             if (selectedStudent != null && selectedCourse != null) {
                 if (grade == null) {
-                    Grade newGrade = new Grade(0, selectedStudent.getId(), selectedCourse.getId(), lecturer.getId(), grd, rmk);
+                    Grade newGrade = new Grade(0, selectedStudent.getId(), selectedCourse.getId(), lecturer.getId(), finalGrade, letterGrade, midSem, exam, attendance, totalAtt);
                     GradeDAO.addGrade(newGrade);
                 } else {
-                    Grade updatedGrade = new Grade(grade.getId(), selectedStudent.getId(), selectedCourse.getId(), lecturer.getId(), grd, rmk);
+                    Grade updatedGrade = new Grade(grade.getId(), selectedStudent.getId(), selectedCourse.getId(), lecturer.getId(), finalGrade, letterGrade, midSem, exam, attendance, totalAtt);
                     GradeDAO.updateGrade(updatedGrade);
                 }
                 showManageGrades();
@@ -835,9 +986,18 @@ public class GradedApplication extends Application {
         HBox buttonBox = new HBox(10, saveBtn, cancelBtn);
 
         root.getChildren().addAll(titleLabel, new Label("Student:"), studentCombo, new Label("Course:"), courseCombo,
-                                  new Label("Grade:"), gradeField, new Label("Remark:"), remarkArea, buttonBox);
+                                  new Label("Mid-Semester Score (20%):"), midSemField,
+                                  new Label("Exam Score (70%):"), examField,
+                                  new Label("Student Attendance:"), attendanceField,
+                                  new Label("Total Attendance:"), totalAttendanceField,
+                                  buttonBox);
 
-        Scene scene = createStyledScene(root, 500, 500);
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("scroll-pane");
+
+        Scene scene = createStyledScene(scrollPane, 500, 500);
         primaryStage.setScene(scene);
     }
 
@@ -872,9 +1032,16 @@ public class GradedApplication extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         HBox buttonBox = new HBox(10);
+        buttonBox.getStyleClass().add("button-group");
+        
         Button approveBtn = new Button("Approve Selected");
+        approveBtn.getStyleClass().add("success-button");
+        
         Button rejectBtn = new Button("Reject Selected");
+        rejectBtn.getStyleClass().add("danger-button");
+        
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
 
         buttonBox.getChildren().addAll(approveBtn, rejectBtn, backBtn);
 
@@ -963,26 +1130,117 @@ public class GradedApplication extends Application {
         TableColumn<StudentGradeInfo, String> courseNameCol = new TableColumn<>("Course Name");
         courseNameCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCourseName()));
 
-        TableColumn<StudentGradeInfo, Double> gradeCol = new TableColumn<>("Grade");
-        gradeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getGradeValue()));
+        TableColumn<StudentGradeInfo, String> midSemCol = new TableColumn<>("MidSem");
+        midSemCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getMidSem())));
 
-        TableColumn<StudentGradeInfo, String> remarkCol = new TableColumn<>("Remark");
+        TableColumn<StudentGradeInfo, String> examCol = new TableColumn<>("Exam");
+        examCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getExam())));
+
+        TableColumn<StudentGradeInfo, String> attCol = new TableColumn<>("Attendance");
+        attCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getAttendance()));
+
+        TableColumn<StudentGradeInfo, String> gradeCol = new TableColumn<>("Total");
+        gradeCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(String.format("%.1f", cellData.getValue().getGradeValue())));
+
+        TableColumn<StudentGradeInfo, String> remarkCol = new TableColumn<>("Grade");
         remarkCol.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getRemark()));
 
-        table.getColumns().addAll(courseNameCol, gradeCol, remarkCol);
+        table.getColumns().addAll(courseNameCol, midSemCol, examCol, attCol, gradeCol, remarkCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
+        
+        Button printBtn = new Button("Print Report Card");
+        printBtn.getStyleClass().add("primary-button");
 
         table.setPrefHeight(300);
 
         backBtn.setOnAction(e -> showStudentDashboard());
+        printBtn.setOnAction(e -> printReportCard(student, table.getItems()));
 
-        root.getChildren().addAll(titleLabel, table, backBtn);
+        HBox buttonBox = new HBox(10, backBtn, printBtn);
+        buttonBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
+        root.getChildren().addAll(titleLabel, table, buttonBox);
 
         Scene scene = createStyledScene(root, 800, 600);
         primaryStage.setScene(scene);
     }
+
+    private void printReportCard(Student student, List<StudentGradeInfo> grades) {
+        javafx.print.PrinterJob job = javafx.print.PrinterJob.createPrinterJob();
+        if (job != null && job.showPrintDialog(primaryStage)) {
+            // Create printable layout
+            VBox printableContent = new VBox(20);
+            printableContent.setPadding(new Insets(40));
+            printableContent.setStyle("-fx-background-color: white;"); // Ensure white background for print
+
+            // Header
+            VBox header = new VBox(5);
+            header.setAlignment(javafx.geometry.Pos.CENTER);
+            Label schoolName = new Label("Windsor International School   ");
+            schoolName.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: black;");
+            Label reportTitle = new Label("OFFICIAL REPORT CARD");
+            reportTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;");
+            Label dateLabel = new Label("Date: " + java.time.LocalDate.now());
+            dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #555;");
+            header.getChildren().addAll(schoolName, reportTitle, dateLabel);
+
+            // Student Details
+            javafx.scene.layout.GridPane details = new javafx.scene.layout.GridPane();
+            details.setHgap(10);
+            details.setVgap(5);
+            details.add(new Label("Student Name:"), 0, 0);
+            details.add(new Label(student.getName()), 1, 0);
+            details.add(new Label("Student ID:"), 0, 1);
+            details.add(new Label(student.getStudentId()), 1, 1);
+            details.setStyle("-fx-font-size: 14px; -fx-text-fill: black;");
+
+            // Grades Table (Custom Grid for printing)
+            javafx.scene.layout.GridPane gradeGrid = new javafx.scene.layout.GridPane();
+            gradeGrid.setHgap(15);
+            gradeGrid.setVgap(10);
+            gradeGrid.setStyle("-fx-border-color: black; -fx-border-width: 1px; -fx-padding: 10px;");
+            
+            // Headers
+            String[] headers = {"Course", "MidSem (20%)", "Exam (70%)", "Attendance (10%)", "Total", "Grade"};
+            for (int i = 0; i < headers.length; i++) {
+                Label h = new Label(headers[i]);
+                h.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: black;");
+                gradeGrid.add(h, i, 0);
+            }
+
+            // Rows
+            int row = 1;
+            for (StudentGradeInfo info : grades) {
+                gradeGrid.add(new Label(info.getCourseName()), 0, row);
+                gradeGrid.add(new Label(String.format("%.1f", info.getMidSem())), 1, row);
+                gradeGrid.add(new Label(String.format("%.1f", info.getExam())), 2, row);
+                gradeGrid.add(new Label(info.getAttendance()), 3, row);
+                gradeGrid.add(new Label(String.format("%.1f", info.getGradeValue())), 4, row);
+                gradeGrid.add(new Label(info.getRemark()), 5, row);
+                row++;
+            }
+
+            // Footer
+            VBox footer = new VBox(30);
+            footer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            Label signature = new Label("Principal's Signature: __________________________");
+            Label generatedBy = new Label("Generated by GradedApp");
+            generatedBy.setStyle("-fx-font-size: 10px; -fx-text-fill: #777;");
+            footer.getChildren().addAll(signature, generatedBy);
+
+            printableContent.getChildren().addAll(header, new javafx.scene.control.Separator(), details, new javafx.scene.control.Separator(), gradeGrid, new javafx.scene.control.Separator(), footer);
+
+            // Print
+            boolean success = job.printPage(printableContent);
+            if (success) {
+                job.endJob();
+            }
+        }
+    }
+
 
     private void showMakeRequest() {
         Student student = StudentDAO.getStudentByUserId(loggedInUser.getId());
@@ -1005,7 +1263,10 @@ public class GradedApplication extends Application {
         typeCombo.setPromptText("Select Request Type");
 
         Button submitBtn = new Button("Submit");
+        submitBtn.getStyleClass().add("success-button");
+        
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("secondary-button");
 
         submitBtn.setOnAction(e -> {
             StudentGradeInfo selected = gradeCombo.getValue();
@@ -1022,7 +1283,12 @@ public class GradedApplication extends Application {
 
         root.getChildren().addAll(titleLabel, new Label("Select Grade:"), gradeCombo, new Label("Request Type:"), typeCombo, buttonBox);
 
-        Scene scene = createStyledScene(root, 500, 400);
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add("scroll-pane");
+
+        Scene scene = createStyledScene(scrollPane, 500, 400);
         primaryStage.setScene(scene);
     }
 
@@ -1053,6 +1319,7 @@ public class GradedApplication extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         Button backBtn = new Button("Back");
+        backBtn.getStyleClass().add("secondary-button");
 
         table.setPrefHeight(300);
 
@@ -1078,6 +1345,9 @@ public class GradedApplication extends Application {
         public String getCourseName() { return courseName; }
         public double getGradeValue() { return grade.getGrade(); }
         public String getRemark() { return grade.getRemark(); }
+        public double getMidSem() { return grade.getMidSemScore(); }
+        public double getExam() { return grade.getExamScore(); }
+        public String getAttendance() { return grade.getAttendanceCount() + "/" + grade.getTotalAttendance(); }
     }
 
     private static class StudentRequestInfo {

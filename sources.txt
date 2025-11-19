@@ -1,0 +1,14 @@
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\DatabaseHelper.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\GradedApplication.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\CourseDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\GradeDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\LecturerDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\RequestDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\StudentDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\dao\UserDAO.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\Course.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\Grade.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\Lecturer.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\Request.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\Student.java
+C:\CodeRepo\tapnhop\grader_pj\src\java\com\grader\model\User.java
